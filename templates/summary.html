@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>标品CDN出账数据管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+<div class="navbar">
+    <span class="title">标品CDN出账数据可视化管理系统</span>
+    <button class="btn" id="uploadBtn">上传数据</button>
+</div>
+<div class="container">
+    <div class="card">
+        <h2>全年累计柱状图</h2>
+        <div id="chart" style="width:100%;height:420px;"></div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2>汇总表格</h2>
+            <span class="tip">点击单元格查看该市公司+月份的详细数据</span>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table" id="summaryTable"></table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="uploadModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>上传月度出账Excel文件</h3>
+            <button class="modal-close" id="closeModal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="upload-area" id="dropZone">
+                <p><strong>点击选择文件</strong> 或拖拽 .xlsx 文件到此处</p>
+                <p class="tip">支持一次选择多个文件，重复上传相同月份会覆盖该月数据</p>
+                <input type="file" id="fileInput" multiple accept=".xlsx" style="display:none">
+            </div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" id="cancelBtn">取消</button>
+            <button class="btn" id="submitUpload" disabled>开始上传</button>
+        </div>
+        <div class="progress-box" id="progressBox" style="display:none;">
+            <div class="spinner"></div>
+            <div>正在处理文件，请稍候...</div>
+        </div>
+        <div class="result-box" id="resultBox" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+    // 上传弹窗控制
+    const uploadBtn = document.getElementById("uploadBtn");
+    const uploadModal = document.getElementById("uploadModal");
+    const closeModal = document.getElementById("closeModal");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    function showModal() { uploadModal.style.display = "flex"; }
+    function hideModal() { uploadModal.style.display = "none"; }
+
+    uploadBtn.addEventListener("click", showModal);
+    closeModal.addEventListener("click", hideModal);
+    cancelBtn.addEventListener("click", hideModal);
+    uploadModal.addEventListener("click", (e) => {
+        if (e.target === uploadModal) hideModal();
+    });
+    window.uploadSuccess = function() {
+        hideModal();
+        loadSummary();
+    };
+</script>
+<script src="/static/js/summary.js"></script>
+</body>
+</html>

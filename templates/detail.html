@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>详情页 - 标品CDN出账数据</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="navbar">
+    <span class="title">标品CDN出账数据可视化管理系统</span>
+    <a href="/">返回首页</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h2>明细查询</h2>
+        <div class="filter-bar">
+            <div class="filter-item">
+                <label>发生月份：</label>
+                <input type="month" id="monthPicker">
+            </div>
+            <div class="filter-item">
+                <label>市公司：</label>
+                <select id="citySelect">
+                    <option value="全部">全部</option>
+                </select>
+            </div>
+            <button class="btn" id="queryBtn">查询</button>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table" id="detailTable"></table>
+        </div>
+        <div class="pager" id="pager"></div>
+    </div>
+</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    window.INIT_PARAMS = {
+        city: params.get("city") || "全部",
+        month: params.get("month") || ""
+    };
+</script>
+<script src="/static/js/detail.js"></script>
+</body>
+</html>
