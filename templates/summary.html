@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>标品CDN出账数据管理系统</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
 <div class="navbar">
     <span class="title">标品CDN出账数据可视化管理系统</span>
-    <button class="btn" id="uploadBtn">上传数据</button>
+    <div class="nav-actions">
+        <button class="btn btn-ghost" id="exportBtn">导出对账单</button>
+        <button class="btn" id="uploadBtn">上传数据</button>
+    </div>
 </div>
 <div class="container">
     <div class="card">
@@ -23,6 +26,35 @@
         </div>
         <div class="table-wrap">
             <table class="data-table" id="summaryTable"></table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="exportModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>导出对账单</h3>
+            <button class="modal-close" id="closeExportModal">×</button>
+        </div>
+        <div class="modal-body">
+            <form class="export-form" id="exportForm">
+                <div class="form-item">
+                    <label>选择地市</label>
+                    <select id="citySelect" class="city-select"></select>
+                </div>
+                <div class="form-item">
+                    <label>账期范围</label>
+                    <div class="month-range">
+                        <select id="startMonth" class="month-select"></select>
+                        <span class="range-sep">至</span>
+                        <select id="endMonth" class="month-select"></select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" id="cancelExportBtn">取消</button>
+            <button class="btn" id="submitExportBtn">导出Excel</button>
         </div>
     </div>
 </div>
@@ -73,7 +105,26 @@
         hideModal();
         loadSummary();
     };
+
+    // 导出弹窗控制
+    const exportBtn = document.getElementById("exportBtn");
+    const exportModal = document.getElementById("exportModal");
+    const closeExportModal = document.getElementById("closeExportModal");
+    const cancelExportBtn = document.getElementById("cancelExportBtn");
+
+    function showExportModal() {
+        exportModal.style.display = "flex";
+        if (window.initExportModal) window.initExportModal();
+    }
+    function hideExportModal() { exportModal.style.display = "none"; }
+
+    exportBtn.addEventListener("click", showExportModal);
+    closeExportModal.addEventListener("click", hideExportModal);
+    cancelExportBtn.addEventListener("click", hideExportModal);
+    exportModal.addEventListener("click", (e) => {
+        if (e.target === exportModal) hideExportModal();
+    });
 </script>
-<script src="/static/js/summary.js"></script>
+<script src="/static/js/summary.js?v=3"></script>
 </body>
 </html>

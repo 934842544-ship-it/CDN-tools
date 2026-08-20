@@ -197,3 +197,71 @@ function renderChart() {
 
 window.addEventListener("resize", () => chart.resize());
 loadSummary();
+
+// ===== 导出对账单弹窗逻辑 =====
+const citySelect = document.getElementById("citySelect");
+const startMonth = document.getElementById("startMonth");
+const endMonth = document.getElementById("endMonth");
+const submitExportBtn = document.getElementById("submitExportBtn");
+
+let exportInited = false;
+
+async function loadCitiesAndMonths() {
+    const [citiesResp, monthsResp] = await Promise.all([
+        fetch("/api/cities").then(r => r.json()),
+        fetch("/api/months").then(r => r.json())
+    ]);
+    const cities = citiesResp.code === 0 ? citiesResp.data : [];
+    const months = monthsResp.code === 0 ? monthsResp.data : [];
+
+    citySelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join("");
+
+    const monthOptions = months.map(m => `<option value="${m}">${m}</option>`).join("");
+    startMonth.innerHTML = monthOptions;
+    endMonth.innerHTML = monthOptions;
+
+    if (months.length > 0) {
+        startMonth.value = months[0];
+        endMonth.value = months[months.length - 1];
+    }
+}
+
+startMonth.addEventListener("change", () => {
+    if (startMonth.value > endMonth.value) {
+        endMonth.value = startMonth.value;
+    }
+});
+
+endMonth.addEventListener("change", () => {
+    if (endMonth.value < startMonth.value) {
+        startMonth.value = endMonth.value;
+    }
+});
+
+submitExportBtn.addEventListener("click", () => {
+    const city = citySelect.value;
+
+    if (!city) {
+        alert("请选择地市");
+        return;
+    }
+
+    const params = new URLSearchParams({
+        city: city,
+        start_month: startMonth.value,
+        end_month: endMonth.value
+    });
+
+    window.location.href = `/api/export?${params.toString()}`;
+    hideExportModal();
+});
+
+window.initExportModal = async function() {
+    if (exportInited) return;
+    try {
+        await loadCitiesAndMonths();
+        exportInited = true;
+    } catch (e) {
+        console.error("加载导出选项失败:", e);
+    }
+};

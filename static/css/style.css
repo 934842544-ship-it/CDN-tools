@@ -28,6 +28,11 @@ body {
 }
 .navbar a:hover { opacity: 1; text-decoration: underline; }
 .navbar .btn { margin-left: auto; }
+.nav-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
 
 .container {
     max-width: 1400px;
@@ -308,3 +313,52 @@ table.data-table td.clickable:hover {
     margin-bottom: 12px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* 导出弹窗表单 */
+.export-form .form-item {
+    margin-bottom: 20px;
+}
+.export-form .form-item > label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.city-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+}
+.city-select:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+}
+.month-range {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.month-select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+}
+.month-select:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+}
+.range-sep {
+    color: #999;
+    font-size: 14px;
+}

@@ -5,10 +5,19 @@ import uuid
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from db import init_db, get_conn
 from excel_parser import process_uploaded_files
+from excel_exporter import export_billing
 from config import MAX_CONTENT_LENGTH, DETAIL_COLUMNS, DETAIL_COLUMNS_CN, FILTER_ATTRIBUTE_16
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+
+
+@app.after_request
+def add_no_cache(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.before_request
@@ -180,6 +189,30 @@ def api_settle():
         return fail(f"更新失败: {e}")
     finally:
         conn.close()
+
+
+@app.route("/api/export")
+def api_export():
+    city = request.args.get("city", "").strip()
+    start_month = request.args.get("start_month", "").strip()
+    end_month = request.args.get("end_month", "").strip()
+    if not city or not start_month or not end_month:
+        return fail("参数不完整")
+    try:
+        filename, buf = export_billing(city, start_month, end_month)
+    except Exception as e:
+        return fail(f"导出失败: {e}")
+
+    from flask import send_file
+    from urllib.parse import quote
+    resp = send_file(
+        buf,
+        as_attachment=True,
+        download_name=quote(filename),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    resp.headers["Content-Disposition"] = f"attachment; filename*=UTF-8''{quote(filename)}"
+    return resp
 
 
 # ---------- 错误处理 ----------
